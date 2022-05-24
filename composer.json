@@ -1,0 +1,20 @@
+{
+  "name": "olelishna/emailverifier",
+  "description": "Email Verifier",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Olga Svistunova",
+      "email": "olelishna@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Olelishna\\EmailVerifier\\": "src/"
+    }
+  }
+}
