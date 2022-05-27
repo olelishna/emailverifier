@@ -8,12 +8,29 @@ use Olelishna\EmailVerifier\Data\{DomainsExample, DomainsDisposable, DomainsTypo
 
 class Verifier
 {
-    public static function check(array $arrayOfEmails = []): array
+    protected static array $defaultOptions = [
+        'validFormat' => true,
+        'hostExists' => true,
+        'mxExists' => true,
+        'example' => true,
+        'disposable' => true,
+        'possMistyped' => true,
+    ];
+
+    /**
+     * @param string[] $emails
+     */
+    public function __construct(public array $emails = [], public array $options = [])
     {
-        return array_map('self::isValid', $arrayOfEmails);
+        $this->options = array_merge(self::$defaultOptions, $this->options);
     }
 
-    private static function isValid(string $address): array
+    public function check(): array
+    {
+        return array_map([$this, 'isValid'], $this->emails);
+    }
+
+    private function isValid(string $address): array
     {
         $email_data = [
             'address' => $address,
@@ -28,12 +45,29 @@ class Verifier
             $email_data['domain'] = $parts['domain'];
         }
 
-        $email_data['validFormat'] = self::isValidFormat($address);
-        $email_data['hostExists'] = self::hostExists($email_data['domain']);
-        $email_data['mxExists'] = self::mxExists($email_data['domain']);
-        $email_data['example'] = self::isExampleDomain($email_data['domain']);
-        $email_data['disposable'] = self::isTemporaryDomain($email_data['domain']);
-        $email_data['possMistyped'] = self::isPossibleTypoInDomain($email_data['domain']);
+        if ($this->options['validFormat']) {
+            $email_data['validFormat'] = self::isValidFormat($address);
+        }
+
+        if ($this->options['hostExists']) {
+            $email_data['hostExists'] = self::hostExists($email_data['domain']);
+        }
+
+        if ($this->options['mxExists']) {
+            $email_data['mxExists'] = self::mxExists($email_data['domain']);
+        }
+
+        if ($this->options['example']) {
+            $email_data['example'] = self::isExampleDomain($email_data['domain']);
+        }
+
+        if ($this->options['disposable']) {
+            $email_data['disposable'] = self::isTemporaryDomain($email_data['domain']);
+        }
+
+        if ($this->options['possMistyped']) {
+            $email_data['possMistyped'] = self::isPossibleTypoInDomain($email_data['domain']);
+        }
 
         return $email_data;
     }

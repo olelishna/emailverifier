@@ -15,4 +15,16 @@ Verify email addresses without sending an email
     
     $arrayOfEmails = ['test@example.com'];
 
-    $resultArray = Olelishna\EmailVerifier\Verifier::check($arrayOfEmails);
+    // Default options
+    $options = [
+        'validFormat' => true,
+        'hostExists' => true,
+        'mxExists' => true,
+        'example' => true,
+        'disposable' => true,
+        'possMistyped' => true,
+    ];
+
+    $verifier = new Olelishna\EmailVerifier\Verifier($arrayOfEmails, $options);
+
+    $resultArray = $verifier->check();
